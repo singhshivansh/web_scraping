@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Clark Kent",
+        "from": "Krypton",
+        "age": 45
+    },
+    {
+        "name": "Bruce Wayne",
+        "from": "Earth",
+        "age": 45
+    },
+    {
+        "name": "Diana Prince",
+        "from": "Themiscera",
+        "age": 120
+    },
+    {
+        "name": "Barry Allen",
+        "from": "Earth",
+        "age": 32
+    }
+]

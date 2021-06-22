@@ -5,6 +5,7 @@ const base_url = "https://www.espncricinfo.com/";
 
 const url = "https://www.espncricinfo.com/series/ipl-2020-21-1210595";
 
+const each_match = require('./each_match_detail');
 
 request(url, main_func);
 
@@ -23,8 +24,10 @@ function get_view_all(html){
     const $ = cheerio.load(html);
 
     const view_all = $('[data-hover="View All Results"]');
+    const view_all_url = base_url+view_all.attr('href');
 
-    return (base_url+view_all.attr('href'));
+    console.log(view_all_url);
+    return (view_all_url);
 }
 
 
@@ -43,6 +46,10 @@ const get_all_matches = (error, response, html)=>{
 
     for(let i=0; i<match_block_array.length; i++){
         const match_block =  $(match_block_array[i]).find(".match-info-link-FIXTURES");
-        console.log($(match_block[0]).attr('href'), "\n");
+        const match_url = $(match_block[0]).attr('href');
+
+        // console.log(base_url+ match_url);
+        each_match.main_fn(base_url+match_url);
+        // console.log($(match_block[0]).attr('href'), "\n");
     }
 }
