@@ -28,20 +28,18 @@ function get_details(html){
     team1 = get_team_name(match_blocks[0]);
     team2 = get_team_name(match_blocks[1]);
 
-    make_folder(team1);
-    make_folder(team2);
-
     // console.log(team1, team2);
 
     const venue  = get_venue(html);
     const date   = get_date(html);
     const result = get_result(html);
 
-    console.log(venue, date, result);
+    console.log(result);
 
     for(let i=0; i<match_blocks.length; i++){
         const team_name = get_team_name(match_blocks[i]);
         // console.log(team_name);
+        parentFolder();
         make_folder(team_name);
         batsman(match_blocks[i], team_name, venue, date, result);
     }
@@ -142,6 +140,7 @@ const processPlayer = (playerData, teamName, playerName)=>{
     content.push(playerData);
 
     excelWriter(filePath, content, playerName);
+    jsonWriter(teamName, playerData, playerName);
 }
 
 
@@ -150,6 +149,27 @@ const excelWriter = (filePath, data, sheetName)=>{
     let newWS = xlsx.utils.json_to_sheet(data);
     xlsx.utils.book_append_sheet(newWB, newWS, sheetName);
     xlsx.writeFile(newWB, filePath);
+}
+
+const jsonWriter = (teamName, data, playerName) => {
+    const filePath = path.join(__dirname, "IPL_Teams", teamName, playerName + ".json");
+    if(fs.existsSync(filePath) == false){
+        // fs.mkdirSync(filePath);
+        const st = [];
+        st.push(data);
+        const stringify_data = JSON.stringify(st);
+
+        fs.writeFileSync(filePath, stringify_data);
+    }else{
+        let fileData = fs.readFileSync(filePath);
+        let fileDatajson = JSON.parse(fileData);
+        fileDatajson.push(data);
+
+        let stringifyData = JSON.stringify(fileDatajson);
+
+        fs.writeFileSync(filePath, stringifyData);
+    }
+
 }
 
 const excelReader = (filePath, sheetName)=>{
