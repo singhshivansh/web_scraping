@@ -7,7 +7,7 @@ It's a repository which have different Web Scraping Projects.
 
 This scraper scraps the IPL 2019 data and save statistics in a ordered manner in Excel and JSON :
 
-e.g. - "Chennai Super Kings/MS Dhoni/MS Dhoni.xlsx"
+e.g. - "IPL_Teams/Chennai Super Kings/MS Dhoni.xlsx"
 
    "IPL_Teams/Chennai Super Kings/MS Dhoni.json"
 
