@@ -3,9 +3,7 @@ const cheerio = require('cheerio');
 
 const fs = require('fs');
 const path = require('path');
-const { create } = require('domain');
-
-
+const pdfkit = require('pdfkit');
 
 const base_url = 'https://github.com';
 
@@ -52,7 +50,6 @@ function get_issues(error, response, html){
         const nav = $(articles[i]).find('a');
         const repo_name = $('.f3.color-text-secondary.text-normal.lh-condensed').text().trim();
         const issueLink = $(nav[1]).attr('href');
-        // createJSON(repo_name, topic);
         getIssues(issueLink, repo_name, topic);
     }
 
@@ -77,13 +74,16 @@ function getIssues(issueLink, repoName, topic){
         const issuesArray    = issueContainer.find('.Box-row').find('.Link--primary');
         
         // console.log(issuesArray.length);
+        let issuesArrays = [];
         for(let i=0; i<issuesArray.length; i++){
             const issue = $(issuesArray[i]).attr('href');
             const repo_name = issue.split('/')[1]+ "-" + issue.split('/')[2];
             // console.log($(issuesArray[i]).attr('href'), repo_name, topic);
             createJSON(topic, repo_name, issue);
+            // createPDF(topic, repo_name, issue);
+            issuesArrays.push(issue);
         }
-    
+        console.log(issuesArrays);
         
     });
 }
@@ -109,24 +109,33 @@ function getIssues_driver(error, response, html, topic){
 }
 
 function root_folder(){
-    const filePath = path.join(__dirname, "Github Topic Issues")
-    if(fs.existsSync(filePath) == false)
-        fs.mkdirSync(filePath);
+    const filePath_json = path.join(__dirname, "Github Topic Issues JSON");
+    const filePath_pdf  = path.join(__dirname, "Github Topic Issues PDF");
+
+    if(fs.existsSync(filePath_json) == false)
+        fs.mkdirSync(filePath_json);
+    
+    if(fs.existsSync(filePath_pdf) == false)
+        fs.mkdirSync(filePath_pdf);
 }
 
 function make_topic_folder(topicName){
     root_folder();
 
-    const filePath = path.join(__dirname, "Github Topic Issues", topicName);
+    const filePath_json = path.join(__dirname, "Github Topic Issues JSON", topicName);
+    const filePath_pdf = path.join(__dirname, "Github Topic Issues PDF", topicName);
 
-    if(fs.existsSync(filePath) == false)
-        fs.mkdirSync(filePath);
+    if(fs.existsSync(filePath_json) == false)
+        fs.mkdirSync(filePath_json);
+    
+    if(fs.existsSync(filePath_pdf) == false)
+        fs.mkdirSync(filePath_pdf);
 }
 
 function createJSON(topic, repo_name, issueLink){
     // console.log(topic, repo_name, issueLink);
     // make_topic_folder(topic);
-    const filePath = path.join(__dirname, "Github Topic Issues", topic, repo_name + ".json");
+    const filePath = path.join(__dirname, "Github Topic Issues JSON", topic, repo_name + ".json");
     // console.log(filePath);
 
     if(fs.existsSync(filePath)){
@@ -143,4 +152,13 @@ function createJSON(topic, repo_name, issueLink){
         const stringifyData = JSON.stringify(jsonData);
         fs.writeFileSync(filePath, stringifyData);
     }
+}
+
+
+function createPDF(topic, repo_name, issueLink){
+    const filePath = path.join(__dirname, "Github Topic Issues PDF", topic, repo_name + '.pdf');
+    const doc = new pdfkit();
+    doc.pipe(fs.createWriteStream(filePath));
+    doc.text(issueLink);
+    doc.end();
 }
