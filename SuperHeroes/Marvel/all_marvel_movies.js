@@ -22,6 +22,6 @@ function main(error, response, html){
 function get_movie_details(movie_element){
     const $ = cheerio.load(movie_element);
     const movie_name = $('.lister-item-header').text().split('.')[1].split('(')[0].trim();
-
-    console.log(movie_name);
+    const year       = $('.lister-item-year.text-muted.unbold').text().split(' ');
+    console.log(year);
 }
