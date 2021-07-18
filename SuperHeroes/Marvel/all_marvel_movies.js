@@ -1,6 +1,7 @@
 const request = require('request');
 const cheerio = require('cheerio');
-const { compress } = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
 
 const url = 'https://www.imdb.com/list/ls021778931/';
 const base_url = 'https://www.imdb.com/';
@@ -17,12 +18,16 @@ function main(error, response, html){
     const movie_list = $('.lister-list').find('.lister-item-content');
 
     // console.log(movie_list.length);
+    // make_folder();
     for(let i=0; i<movie_list.length; i++){
         get_movie_details(movie_list[i]);
     }
 }
 
-let movies = []
+function make_folder(){
+    const filePath = path.join(__dirname, "All Marvel Movies");
+}
+
 
 function get_movie_details(movie_element){
     // console.log("pp");
@@ -30,7 +35,8 @@ function get_movie_details(movie_element){
     const movie_name    = $('.lister-item-header').find('a').text();
     let movie_url       =  $('.lister-item-header').find('a').attr('href');
     const year1         = $('.lister-item-year.text-muted.unbold').text().split(' ');
-    const year          = year1[year1.length-1];
+    let year          = year1[year1.length-1];
+    year                = year.slice(1,5);
     let rating          = $('.ipl-rating-widget .ipl-rating-star__rating').text().slice(0,4);
     if (rating.slice(2,4) == 'Ra')
         rating = rating[0] + '.00';
@@ -49,9 +55,29 @@ function get_movie_details(movie_element){
         director : director,
         stars : stars
     }
-    movies.push(movie_json);
-    // console.log();
-    console.log(movie_json);
+    make_JSON(movie_json);
+    console.log(movie_name);
+    // console.log(movie_json);
 }
 
-console.log(movies);
+function make_JSON(movie_json){
+    const filePath = path.join(__dirname, "All Marvel Movies.json");
+
+    if(fs.existsSync(filePath)){
+        const fileData = fs.readFileSync(filePath);
+        let jsonData = JSON.parse(fileData);
+        jsonData.push(movie_json);
+        const strngifyData = JSON.stringify(jsonData);
+
+        fs.writeFileSync(filePath, strngifyData);
+    }else{
+        let arr = [];
+        arr.push(movie_json);
+        const stringifyData = JSON.stringify(arr);
+
+        fs.writeFileSync(filePath, stringifyData);
+    }
+}
+
+
+// console.log(movies);

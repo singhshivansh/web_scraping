@@ -1,13 +1,16 @@
-
 const request = require('request');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');
 
-const url = 'https://www.imdb.com/list/ls041927031/';
-const base_url = 'https://www.imdb.com/';
+const url = 'https://www.imdb.com/list/ls021778931/';
+// const base_url = 'https://www.imdb.com/';
 
-request(url, main);
+main1(url, "Marvel");
+
+function main1(url, name){
+    request(url, main, name);
+}
 
 function main(error, response, html){
     if(error)
@@ -25,10 +28,6 @@ function main(error, response, html){
     }
 }
 
-function make_folder(){
-    const filePath = path.join(__dirname, "All Marvel Movies");
-}
-
 
 function get_movie_details(movie_element){
     // console.log("pp");
@@ -42,20 +41,12 @@ function get_movie_details(movie_element){
     if (rating.slice(2,4) == 'Ra')
         rating = rating[0] + '.00';
     const directors_and_stars = $($('.text-muted.text-small')[1]).text().split('|');
+    let director = directors_and_stars[0].trim().split(':');
     
-    let director = '';
-    let stars = '';
-    try {
-        director = directors_and_stars[0].trim().split(':');
-        
-        stars = directors_and_stars[1].trim().split(":");
-    
-        stars = stars.splice(1);
-        director  = director.splice(1);
-    } catch (error) {
-        director = '';
-        stars = '';
-    }
+    let stars = directors_and_stars[1].trim().split(":");
+  
+    stars = stars.splice(1);
+    director  = director.splice(1);
     
     const movie_json = {
         "name" : movie_name,
@@ -70,7 +61,7 @@ function get_movie_details(movie_element){
 }
 
 function make_JSON(movie_json){
-    const filePath = path.join(__dirname, "All DC Movies.json");
+    const filePath = path.join(__dirname, name);
 
     if(fs.existsSync(filePath)){
         const fileData = fs.readFileSync(filePath);
