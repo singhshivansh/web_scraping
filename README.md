@@ -1,8 +1,6 @@
 
 # Web Scraping Projects
 
-It's a repository which have different Web Scraping Projects.
-
 ## Project - 1 (IPL Scraper)
 
 This scraper scraps the IPL 2019 data and save statistics in a ordered manner in Excel and JSON :
@@ -24,4 +22,3 @@ This scraper scraps issue links of top 10 repositories of random 3 topics from g
 * go to directory - Github/Github_scraping_project
 
 * run  - node github_project_main.js
-
